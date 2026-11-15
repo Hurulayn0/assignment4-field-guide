@@ -1,0 +1,11 @@
+Part 1 validation
+Node: v24.21.0
+Fresh-cache npm ci: exit 0
+npm run all: exit 0
+npm run check: exit 0
+23 README output blocks matched real records
+12 form entries contain all required fields and plain equivalents
+Five pitfalls, T1-T5 and eight comparison rows present
+Nine deliberate compiler experiments: expected exit 2
+Temporary compiler files removed
+Part 1 only: React props and bonuses are reserved for the next part

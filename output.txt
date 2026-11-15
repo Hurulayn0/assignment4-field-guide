@@ -1,0 +1,58 @@
+
+> destructuring-guide@0.0.0 all
+> npm run js && npm run ts
+
+
+> destructuring-guide@0.0.0 js
+> node js/arrays.mjs && node js/objects.mjs && node js/params.mjs && node js/pitfalls.mjs
+
+form 1: 5 7
+form 2: mint ["thyme","sage"]
+form 3: west east
+form 4: 6 6 null
+form 5: basil 2
+form 6: basil
+form 7: 1 1 null
+form 8: B2 {"crop":"basil","liters":2,"sensor":{"moisture":34},"days":["Mon","Thu"]}
+form 9: 34 Mon
+form 10: liters 2
+form 11: seedlings: 1 L | basil: 2 L
+form 11b: 12
+form 12 object: Mon 2
+form 12 object: Thu 3
+form 12 Map: B2 4
+form 12 Map: C1 2
+pitfall 1: undefined TypeError: Cannot destructure property 'liters' of 'source' as it is undefined.
+pitfall 1: null TypeError: Cannot destructure property 'liters' of 'source' as it is null.
+pitfall 2: undefined 1
+pitfall 2: undefined 1
+pitfall 2: null null
+pitfall 3: SyntaxError: Unexpected token '='
+pitfall 3 fixed: 2
+pitfall 4: 10 true {"crop":"basil"}
+pitfall 5: basil 2 | 2 basil
+
+> destructuring-guide@0.0.0 ts
+> tsx ts/arrays.ts && tsx ts/objects.ts && tsx ts/params.ts && tsx ts/types.ts
+
+form 1: 5 7
+form 2: mint ["thyme","sage"]
+form 3: west east
+form 4: 6 6 null
+form 5: basil 2
+form 6: basil
+form 7: 1 1 null
+form 8: B2 {"crop":"basil","liters":2,"sensor":{"moisture":34},"days":["Mon","Thu"]}
+form 9: 34 Mon
+form 10: liters 2
+form 11: seedlings: 1 L | basil: 2 L
+form 11b: 12
+form 12 object: Mon 2
+form 12 object: Thu 3
+form 12 Map: B2 4
+form 12 Map: C1 2
+T1: basil basil
+T2: 12 basil 4 mint
+T3: undefined empty no pot
+T4: null null unlabelled
+T5: undefined 2
