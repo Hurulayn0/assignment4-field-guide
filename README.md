@@ -3,7 +3,9 @@ Student number: 2200005795
 
 # Destructuring Field Guide
 
-This guide covers the twelve JavaScript and strict TypeScript forms, five pitfalls, T1-T5 and React P1-P7. The examples use a balcony garden theme. Depth experiments and sourced real-code analysis are also complete; the LaTeX guide and clean packaging are the final stage.
+This guide covers all twelve JavaScript and strict TypeScript forms, five pitfalls, T1-T5, React P1-P7 and the four bonus sections. The examples use a balcony garden theme.
+
+Bonuses submitted for assessment: 1 (LaTeX), 2 (Depth), 3 (Real code), and 4 (Git repository).
 
 ## Run and scope
 
@@ -724,9 +726,20 @@ Types do not change destructuring at runtime. These are actual strict compiler d
 | 11: parameter | Properties are read from one object | Optional fields for {} defaults | TS2345: Argument of type '{}' is not assignable to parameter of type '{ liters: number; }'. |
 | 12: Map loop | Entries contain key and value | Map<string, number> | TS2345: Argument of type 'string' is not assignable to parameter of type 'number'. |
 | T5: missing property | A wrong key reads undefined in JS | Correct property spelling | TS2339: Property 'litres' does not exist on type '{ liters: number; }'. |
-
 | P7: children | React decides runtime rendering | ReactNode | TS2322: Type '() => string' is not assignable to type 'ReactNode'. |
 | P7: DOM forwarding | Props spread in order | `ComponentProps<'button'>` | TS2322: Type 'string' is not assignable to type 'boolean \| undefined'. |
+
+## Bonus 1: LaTeX
+
+The complete guide, including all twelve forms, pitfalls, T1-T5, P1-P7, the comparison table, the depth experiments, the real-code cases and this log, is included in output/pdf/guide.tex and output/pdf/guide.pdf. The LaTeX is generated from this README rather than a shortened version. Code uses listings, the comparison uses a real longtable, and the contents page links to the sections.
+
+Tools: Pandoc 3.14 and Tectonic 0.17.0. With both executables on PATH, rebuild from the project root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/build-guide.ps1
+```
+
+The script also accepts -Pandoc and -Tectonic executable paths. scripts/latex-layout.lua sets wrapping paragraph widths for the real comparison table. It runs Pandoc with --from=gfm --to=latex --standalone --listings --toc, then Tectonic with --keep-logs. The build log is output/pdf/guide.log. The output PDF is visually checked after compilation. Runtime code needs only the npm dependencies; rebuilding the PDF additionally needs these two document tools and a first-run TeX package download.
 
 ## Bonus 2: Depth
 
@@ -1006,11 +1019,13 @@ In pMapIterable, backpressure defaults to the already-bound concurrency. Omittin
 
 Source notes: the Task Manager cases were read from the original local starter.zip, not from the completed Assignment 3 repository. Installed TypeScript source is pinned by package-lock.json; its project is [microsoft/TypeScript](https://github.com/microsoft/TypeScript). The p-map reference is pinned to commit c9831c7a9b7baa6e986428cc7f1c83af694b5c8e, so future edits cannot shift this cited version. The small excerpts retain their original source spelling.
 
-## Repository and final packaging
+## Bonus 4: Git repository
 
-Public repository: [assignment4-field-guide](https://github.com/Hurulayn0/assignment4-field-guide).
+[assignment4-field-guide](https://github.com/Hurulayn0/assignment4-field-guide)
 
-The core destructuring and React examples are implemented and locally verified. Depth experiments and six real-code analyses are verified. The LaTeX/PDF guide and final clean package validation are the remaining work. Bonus 4 will be assessed against the actual dated history and public access.
+The repository is public: the instructor can read its source and history without an invitation. node_modules, local npm caches and disposable compiler sources are ignored. A clean clone is verified with npm install, npm run all and npm run check.
+
+The history includes the initial plain JavaScript/TypeScript field guide on 15 November 2026, followed by separate React implementation, depth experiments, real-code analysis and final LaTeX/package verification stages on 16 November 2026. These are meaningful completed stages on their actual dates; no timestamps are backdated. The final published history contains at least five commits across those two dates. The instructor decides the bonus score.
 
 ## My own log
 

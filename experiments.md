@@ -27,3 +27,9 @@ D1: string, Set and Map patterns should use iteration. Taking one generator valu
 
 ## Depth observations
 All five experiment groups matched the predictions. Exact D1-D5 lines are in output.txt. The deliberate non-iterable failure was caught. npm run all and npm run check exited 0 with no added type suppression.
+
+## Final guide validation plan
+The complete README will be converted to LaTeX, compiled, and rendered for page inspection. The final source will be installed and run from a new-cache clean copy, and the published clone and submission ZIP will be checked separately. Checks are recorded only after completion.
+
+## Final guide observations
+The full PDF compiled successfully and all 18 pages were rendered and inspected. The comparison table and code wrapping passed the layout check. No overfull boxes or out-of-page text were found. A new-cache source copy passed npm ci, npm run all and npm run check, and its actual output matched output.txt. Final public-clone and ZIP checks follow the publishing commit; their execution logs are stored separately from the immutable archive.

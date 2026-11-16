@@ -1,0 +1,6 @@
+Full guide PDF, 16 November 2026
+Pandoc 3.14; Tectonic 0.17.0; compilation exit 0
+18 pages rendered and visually inspected
+62 links; 12 top-level outline entries
+No text outside page bounds; no overfull boxes
+Code examples kept together; actual paragraph-column comparison table verified

@@ -1,0 +1,32 @@
+﻿% Name: Huriye Kayadelen; Student number: 2200005795
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage{microtype}
+\definecolor{garden}{HTML}{245A43}
+\definecolor{codebg}{HTML}{F4F6F5}
+\lstdefinelanguage{JavaScript}{keywords={const,let,function,return,if,else,for,of,in,new,try,catch,finally,throw,import,from,export,default,type,extends,infer,readonly,async,await,yield},sensitive=true,morecomment=[l]{//},morecomment=[s]{/*}{*/},morestring=[b]',morestring=[b]",morestring=[b]`}
+\lstalias{js}{JavaScript}
+\lstalias{ts}{JavaScript}
+\lstalias{tsx}{JavaScript}
+\lstalias{jsx}{JavaScript}
+\lstalias{typescript}{JavaScript}
+\lstalias{TypeScript}{JavaScript}
+\lstdefinelanguage{text}{}
+\lstdefinelanguage{powershell}{}
+\lstdefinelanguage{sh}{}
+\lstdefinelanguage{json}{}
+\lstset{basicstyle=\ttfamily\scriptsize,keywordstyle=\color{garden}\bfseries,commentstyle=\color{gray},backgroundcolor=\color{codebg},frame=single,rulecolor=\color{black!12},breaklines=true,breakatwhitespace=false,columns=fullflexible,keepspaces=true,showstringspaces=false,tabsize=2,xleftmargin=3pt,xrightmargin=3pt,aboveskip=9pt,belowskip=9pt}
+\AtBeginDocument{\hypersetup{colorlinks=true,linkcolor=garden,urlcolor=garden}}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small Destructuring Field Guide}
+\fancyhead[R]{\small Huriye Kayadelen}
+\fancyfoot[C]{\thepage}
+\setlength{\headheight}{14pt}
+\setlength{\emergencystretch}{3em}
+\setcounter{tocdepth}{2}
+
+% Keep each short example together across page boundaries.
+\BeforeBeginEnvironment{lstlisting}{\par\begin{minipage}{\linewidth}}
+\AfterEndEnvironment{lstlisting}{\end{minipage}\par}

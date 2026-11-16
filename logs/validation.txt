@@ -1,11 +1,14 @@
-Part 1 validation
-Node: v24.21.0
-Fresh-cache npm ci: exit 0
-npm run all: exit 0
-npm run check: exit 0
-23 README output blocks matched real records
-12 form entries contain all required fields and plain equivalents
-Five pitfalls, T1-T5 and eight comparison rows present
-Nine deliberate compiler experiments: expected exit 2
-Temporary compiler files removed
-Part 1 only: React props and bonuses are reserved for the next part
+Final required-scope audit, 16 November 2026
+Node v24.21.0 >= 20.19
+All 12 form entries contain Syntax/Example/Output/Use it when/Watch out/plain equivalent
+Five pitfalls; T1-T5; runnable P1-P7 in JS/TS; 10 comparison rows
+36 README output blocks verified against actual records
+12 source identity headers verified
+strict/noUncheckedIndexedAccess true; skipLibCheck false
+One original T5 @ts-expect-error; no any/@ts-ignore in source
+13 isolated comparison/P7 failure cases plus unsuppressed T5; temporary sources removed
+Local all/check passed; clean fresh-cache ci/all/check passed and output matched
+Bonus 1: full LaTeX/PDF and visual audit
+Bonus 2: five D1-D5 experiment groups
+Bonus 3: six reverified source cases with paths/lines/plain rewrites
+Bonus 4: public repository, dated work across 15/16 November; final publishing stage supplies fifth meaningful commit

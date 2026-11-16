@@ -1,0 +1,1477 @@
+% Name: Huriye Kayadelen; Student number: 2200005795
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+  10pt,
+  a4paper,
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=22mm]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{listings}
+\newcommand{\passthrough}[1]{#1}
+\lstset{defaultdialect=[5.3]Lua}
+\lstset{defaultdialect=[x86masm]Assembler}
+\usepackage{longtable,booktabs,array}
+\usepackage{caption}
+\captionsetup[table]{skip=6pt}
+\newcounter{none} % for unnumbered tables
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+% Name: Huriye Kayadelen; Student number: 2200005795
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage{microtype}
+\definecolor{garden}{HTML}{245A43}
+\definecolor{codebg}{HTML}{F4F6F5}
+\lstdefinelanguage{JavaScript}{keywords={const,let,function,return,if,else,for,of,in,new,try,catch,finally,throw,import,from,export,default,type,extends,infer,readonly,async,await,yield},sensitive=true,morecomment=[l]{//},morecomment=[s]{/*}{*/},morestring=[b]',morestring=[b]",morestring=[b]`}
+\lstalias{js}{JavaScript}
+\lstalias{ts}{JavaScript}
+\lstalias{tsx}{JavaScript}
+\lstalias{jsx}{JavaScript}
+\lstalias{typescript}{JavaScript}
+\lstalias{TypeScript}{JavaScript}
+\lstdefinelanguage{text}{}
+\lstdefinelanguage{powershell}{}
+\lstdefinelanguage{sh}{}
+\lstdefinelanguage{json}{}
+\lstset{basicstyle=\ttfamily\scriptsize,keywordstyle=\color{garden}\bfseries,commentstyle=\color{gray},backgroundcolor=\color{codebg},frame=single,rulecolor=\color{black!12},breaklines=true,breakatwhitespace=false,columns=fullflexible,keepspaces=true,showstringspaces=false,tabsize=2,xleftmargin=3pt,xrightmargin=3pt,aboveskip=9pt,belowskip=9pt}
+\AtBeginDocument{\hypersetup{colorlinks=true,linkcolor=garden,urlcolor=garden}}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small Destructuring Field Guide}
+\fancyhead[R]{\small Huriye Kayadelen}
+\fancyfoot[C]{\thepage}
+\setlength{\headheight}{14pt}
+\setlength{\emergencystretch}{3em}
+\setcounter{tocdepth}{2}
+
+% Keep each short example together across page boundaries.
+\BeforeBeginEnvironment{lstlisting}{\par\begin{minipage}{\linewidth}}
+\AfterEndEnvironment{lstlisting}{\end{minipage}\par}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+% fallback for those not using the hyperref driver hyperxmp:
+\makeatletter
+\@ifundefined{xmpquote}{\newcommand{\xmpquote}[1]{#1}}{}
+\makeatother
+\hypersetup{
+  pdftitle={Destructuring Field Guide},
+  pdfauthor={Huriye Kayadelen (2200005795)},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Destructuring Field Guide}
+\author{Huriye Kayadelen (2200005795)}
+\date{16 November 2026}
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{3}
+\tableofcontents
+}
+Name: Huriye Kayadelen Student number: 2200005795
+
+Destructuring Field Guide
+
+This guide covers all twelve JavaScript and strict TypeScript forms,
+five pitfalls, T1-T5, React P1-P7 and the four bonus sections. The
+examples use a balcony garden theme.
+
+Bonuses submitted for assessment: 1 (LaTeX), 2 (Depth), 3 (Real code),
+and 4 (Git repository).
+
+\section{Run and scope}\label{run-and-scope}
+
+Node.js 20.19 or newer is required.
+
+\begin{lstlisting}[language=sh]
+npm ci
+npm run all
+npm run check
+\end{lstlisting}
+
+strict and noUncheckedIndexedAccess stay enabled, and library checking
+is enabled. The single permitted T5 line uses @ts-expect-error. The
+deliberate compiler experiments are run separately without suppressions
+and their temporary sources are removed. output.txt records the actual
+run; logs/check.txt records the strict check.
+
+\section{Field guide}\label{field-guide}
+
+JS files contain the runtime examples; corresponding TS files add tuple,
+object, parameter and collection types. The repeated form lines in
+output.txt are the real JS and TS runs. Snippets below can be run
+separately.
+
+\subsection{Form 1: Values by position}\label{form-1-values-by-position}
+
+\textbf{Syntax:}
+\texttt{const [free,\allowbreak{} used] =\allowbreak{} traySpace(3,\allowbreak{} 4,\allowbreak{} 7)}
+
+\textbf{Example} (js/arrays.mjs; focused snippet):
+
+\begin{lstlisting}
+function traySpace(rows, columns, planted) { return [rows * columns - planted, planted] }
+const [free, used] = traySpace(3, 4, 7)
+console.log('form 1:', free, used)
+\end{lstlisting}
+
+\textbf{Output:}
+
+\begin{lstlisting}
+form 1: 5 7
+\end{lstlisting}
+
+\textbf{Use it when:} a tray calculation returns two related values.
+
+\textbf{Watch out:} Position decides the name. Reversing the bindings
+reverses their meaning.
+
+Plain assignment equivalent (in its own scope):
+
+\begin{lstlisting}
+const result = traySpace(3, 4, 7)
+const free = result[0]
+const used = result[1]
+\end{lstlisting}
+
+\subsection{Form 2: Skip and array
+rest}\label{form-2-skip-and-array-rest}
+
+\textbf{Syntax:}
+\texttt{const [,\allowbreak{} next,\allowbreak{} .\allowbreak{}.\allowbreak{}.\allowbreak{}later] =\allowbreak{} sowingOrder}
+
+\textbf{Example} (js/arrays.mjs; focused snippet):
+
+\begin{lstlisting}
+const sowingOrder = ['basil', 'mint', 'thyme', 'sage']
+const [, next, ...later] = sowingOrder
+console.log('form 2:', next, JSON.stringify(later))
+\end{lstlisting}
+
+\textbf{Output:}
+
+\begin{lstlisting}
+form 2: mint ["thyme","sage"]
+\end{lstlisting}
+
+\textbf{Use it when:} the first sowing is done and you need the
+remaining queue.
+
+\textbf{Watch out:} Rest must come last. It collects a new array, but
+nested values would still be shared.
+
+Plain assignment equivalent (in its own scope):
+
+\begin{lstlisting}
+const next = sowingOrder[1]
+const later = sowingOrder.slice(2)
+\end{lstlisting}
+
+\subsection{Form 3: Swap}\label{form-3-swap}
+
+\textbf{Syntax:}
+\texttt{[morning,\allowbreak{} evening] =\allowbreak{} [evening,\allowbreak{} morning]}
+
+\textbf{Example} (js/arrays.mjs; focused snippet):
+
+\begin{lstlisting}
+let morning = 'east', evening = 'west'
+;[morning, evening] = [evening, morning]
+console.log('form 3:', morning, evening)
+\end{lstlisting}
+
+\textbf{Output:}
+
+\begin{lstlisting}
+form 3: west east
+\end{lstlisting}
+
+\textbf{Use it when:} two pot positions exchange roles.
+
+\textbf{Watch out:} Use let. The leading semicolon prevents this array
+from joining the previous statement.
+
+Plain assignment equivalent (in its own scope):
+
+\begin{lstlisting}
+const oldMorning = morning
+morning = evening
+evening = oldMorning
+\end{lstlisting}
+
+\subsection{Form 4: Array defaults}\label{form-4-array-defaults}
+
+\textbf{Syntax:}
+\texttt{const [missing =\allowbreak{} 6] =\allowbreak{} []}
+
+\textbf{Example} (js/arrays.mjs; focused snippet):
+
+\begin{lstlisting}
+const [missing = 6] = []
+const [unset = 6, explicitNull = 6] = [undefined, null]
+console.log('form 4:', missing, unset, explicitNull)
+\end{lstlisting}
+
+\textbf{Output:}
+
+\begin{lstlisting}
+form 4: 6 6 null
+\end{lstlisting}
+
+\textbf{Use it when:} a missing seed count needs a fallback.
+
+\textbf{Watch out:} Only undefined triggers the default. Null is kept.
+
+Plain assignment equivalent (in its own scope):
+
+\begin{lstlisting}
+const empty = []
+const values = [undefined, null]
+const missing = empty[0] === undefined ? 6 : empty[0]
+const unset = values[0] === undefined ? 6 : values[0]
+const explicitNull = values[1] === undefined ? 6 : values[1]
+\end{lstlisting}
+
+\subsection{Form 5: Properties by name}\label{form-5-properties-by-name}
+
+\textbf{Syntax:}
+\texttt{const \{ crop,\allowbreak{} liters \} =\allowbreak{} bed}
+
+\textbf{Example} (js/objects.mjs; focused snippet):
+
+\begin{lstlisting}
+const bed = { crop: 'basil', liters: 2 }
+const { crop, liters } = bed
+console.log('form 5:', crop, liters)
+\end{lstlisting}
+
+\textbf{Output:}
+
+\begin{lstlisting}
+form 5: basil 2
+\end{lstlisting}
+
+\textbf{Use it when:} a watering record has named fields.
+
+\textbf{Watch out:} Property order does not matter. A missing property
+gives undefined.
+
+Plain assignment equivalent (in its own scope):
+
+\begin{lstlisting}
+const crop = bed.crop
+const liters = bed.liters
+\end{lstlisting}
+
+\subsection{Form 6: Rename}\label{form-6-rename}
+
+\textbf{Syntax:}
+\texttt{const \{ crop:\allowbreak{} label \} =\allowbreak{} bed}
+
+\textbf{Example} (js/objects.mjs; focused snippet):
+
+\begin{lstlisting}
+const bed = { crop: 'basil' }
+const { crop: label } = bed
+console.log('form 6:', label)
+\end{lstlisting}
+
+\textbf{Output:}
+
+\begin{lstlisting}
+form 6: basil
+\end{lstlisting}
+
+\textbf{Use it when:} a crop name is used as a display label.
+
+\textbf{Watch out:} The binding is label. This pattern does not create a
+crop variable.
+
+Plain assignment equivalent (in its own scope):
+
+\begin{lstlisting}
+const label = bed.crop
+\end{lstlisting}
+
+\subsection{Form 7: Object defaults}\label{form-7-object-defaults}
+
+\textbf{Syntax:}
+\texttt{const \{ liters:\allowbreak{} missing =\allowbreak{} 1 \} =\allowbreak{} \{\}}
+
+\textbf{Example} (js/objects.mjs; focused snippet):
+
+\begin{lstlisting}
+const { liters: missing = 1 } = {}
+const { liters: unset = 1 } = { liters: undefined }
+const { liters: explicitNull = 1 } = { liters: null }
+console.log('form 7:', missing, unset, explicitNull)
+\end{lstlisting}
+
+\textbf{Output:}
+
+\begin{lstlisting}
+form 7: 1 1 null
+\end{lstlisting}
+
+\textbf{Use it when:} an omitted watering amount should use one liter.
+
+\textbf{Watch out:} Missing and undefined use one; null does not. The
+whole source must still be an object.
+
+Plain assignment equivalent (in its own scope):
+
+\begin{lstlisting}
+const absent = {}
+const undefinedField = { liters: undefined }
+const nullField = { liters: null }
+const missing = absent.liters === undefined ? 1 : absent.liters
+const unset = undefinedField.liters === undefined ? 1 : undefinedField.liters
+const explicitNull = nullField.liters === undefined ? 1 : nullField.liters
+\end{lstlisting}
+
+\subsection{Form 8: Object rest}\label{form-8-object-rest}
+
+\textbf{Syntax:}
+\texttt{const \{ id,\allowbreak{} .\allowbreak{}.\allowbreak{}.\allowbreak{}details \} =\allowbreak{} bed}
+
+\textbf{Example} (js/objects.mjs; shared runnable example):
+
+\begin{lstlisting}
+const bed = { id: 'B2', crop: 'basil', liters: 2, sensor: { moisture: 34 }, days: ['Mon', 'Thu'] }
+const { crop, liters } = bed
+console.log('form 5:', crop, liters)
+const { crop: label } = bed
+console.log('form 6:', label)
+const { liters: missing = 1 } = {}
+const { liters: unset = 1 } = { liters: undefined }
+const { liters: explicitNull = 1 } = { liters: null }
+console.log('form 7:', missing, unset, explicitNull)
+const { id, ...details } = bed
+console.log('form 8:', id, JSON.stringify(details))
+const { sensor: { moisture }, days: [firstDay] } = bed
+console.log('form 9:', moisture, firstDay)
+const key = 'liters'
+const { [key]: selected } = bed
+console.log('form 10:', key, selected)
+\end{lstlisting}
+
+\textbf{Output:}
+
+\begin{lstlisting}
+form 8: B2 {"crop":"basil","liters":2,"sensor":{"moisture":34},"days":["Mon","Thu"]}
+\end{lstlisting}
+
+\textbf{Use it when:} a public record should leave out the bed ID.
+
+\textbf{Watch out:} Rest copies remaining own enumerable properties,
+shallowly.
+
+Plain assignment equivalent (in its own scope):
+
+\begin{lstlisting}
+const id = bed.id
+const details = Object.assign({}, bed)
+delete details.id
+\end{lstlisting}
+
+\subsection{Form 9: Nested object and
+array}\label{form-9-nested-object-and-array}
+
+\textbf{Syntax:}
+\texttt{const \{ sensor:\allowbreak{} \{ moisture \},\allowbreak{} days:\allowbreak{} [firstDay] \} =\allowbreak{} bed}
+
+\textbf{Example} (js/objects.mjs; shared runnable example):
+
+\begin{lstlisting}
+const bed = { id: 'B2', crop: 'basil', liters: 2, sensor: { moisture: 34 }, days: ['Mon', 'Thu'] }
+const { crop, liters } = bed
+console.log('form 5:', crop, liters)
+const { crop: label } = bed
+console.log('form 6:', label)
+const { liters: missing = 1 } = {}
+const { liters: unset = 1 } = { liters: undefined }
+const { liters: explicitNull = 1 } = { liters: null }
+console.log('form 7:', missing, unset, explicitNull)
+const { id, ...details } = bed
+console.log('form 8:', id, JSON.stringify(details))
+const { sensor: { moisture }, days: [firstDay] } = bed
+console.log('form 9:', moisture, firstDay)
+const key = 'liters'
+const { [key]: selected } = bed
+console.log('form 10:', key, selected)
+\end{lstlisting}
+
+\textbf{Output:}
+
+\begin{lstlisting}
+form 9: 34 Mon
+\end{lstlisting}
+
+\textbf{Use it when:} a sensor reading and the first watering day belong
+together.
+
+\textbf{Watch out:} Missing sensor throws. An empty days array gives
+undefined; keep deep patterns short.
+
+Plain assignment equivalent (in its own scope):
+
+\begin{lstlisting}
+const moisture = bed.sensor.moisture
+const firstDay = bed.days[0]
+\end{lstlisting}
+
+\subsection{Form 10: Computed key}\label{form-10-computed-key}
+
+\textbf{Syntax:}
+\texttt{const \{ [key]:\allowbreak{} selected \} =\allowbreak{} bed}
+
+\textbf{Example} (js/objects.mjs; shared runnable example):
+
+\begin{lstlisting}
+const bed = { id: 'B2', crop: 'basil', liters: 2, sensor: { moisture: 34 }, days: ['Mon', 'Thu'] }
+const { crop, liters } = bed
+console.log('form 5:', crop, liters)
+const { crop: label } = bed
+console.log('form 6:', label)
+const { liters: missing = 1 } = {}
+const { liters: unset = 1 } = { liters: undefined }
+const { liters: explicitNull = 1 } = { liters: null }
+console.log('form 7:', missing, unset, explicitNull)
+const { id, ...details } = bed
+console.log('form 8:', id, JSON.stringify(details))
+const { sensor: { moisture }, days: [firstDay] } = bed
+console.log('form 9:', moisture, firstDay)
+const key = 'liters'
+const { [key]: selected } = bed
+console.log('form 10:', key, selected)
+\end{lstlisting}
+
+\textbf{Output:}
+
+\begin{lstlisting}
+form 10: liters 2
+\end{lstlisting}
+
+\textbf{Use it when:} the selected metric is chosen by a key variable.
+
+\textbf{Watch out:} The brackets evaluate key. In TS, keyof limits it to
+valid property names.
+
+Plain assignment equivalent (in its own scope):
+
+\begin{lstlisting}
+const selected = bed[key]
+\end{lstlisting}
+
+\subsection{Form 11: Object parameter
+default}\label{form-11-object-parameter-default}
+
+\textbf{Syntax:}
+\texttt{function watering(\{ liters =\allowbreak{} 1,\allowbreak{} crop =\allowbreak{} 'seedlings' \} =\allowbreak{} \{\})}
+
+\textbf{Example} (js/params.mjs; shared runnable example):
+
+\begin{lstlisting}
+function watering({ liters = 1, crop = 'seedlings' } = {}) { return crop + ': ' + liters + ' L' }
+console.log('form 11:', watering(), '|', watering({ crop: 'basil', liters: 2 }))
+// Form 11b: array parameter requested by starter.
+function area([rows, columns]) { return rows * columns }
+console.log('form 11b:', area([3, 4]))
+const weekly = { Mon: 2, Thu: 3 }
+for (const [day, liters] of Object.entries(weekly)) console.log('form 12 object:', day, liters)
+const pots = new Map([['B2', 4], ['C1', 2]])
+for (const [bed, count] of pots) console.log('form 12 Map:', bed, count)
+\end{lstlisting}
+
+\textbf{Output:}
+
+\begin{lstlisting}
+form 11: seedlings: 1 L | basil: 2 L
+form 11b: 12
+\end{lstlisting}
+
+\textbf{Use it when:} callers may omit the whole options object or
+individual fields.
+
+\textbf{Watch out:} The outer default handles omitted/undefined
+arguments, not null. Field defaults are a separate step. The typed
+version uses optional fields so \{\} is valid.
+
+Plain assignment equivalent (in its own scope):
+
+\begin{lstlisting}
+function watering(options = {}) {
+ const liters = options.liters === undefined ? 1 : options.liters
+ const crop = options.crop === undefined ? 'seedlings' : options.crop
+ return crop + ': ' + liters + ' L'
+}
+\end{lstlisting}
+
+\subsection{Form 12: Entry loops}\label{form-12-entry-loops}
+
+\textbf{Syntax:}
+\texttt{for (const [day,\allowbreak{} liters] of Object.\allowbreak{}entries(weekly))}
+
+\textbf{Example} (js/params.mjs; shared runnable example):
+
+\begin{lstlisting}
+function watering({ liters = 1, crop = 'seedlings' } = {}) { return crop + ': ' + liters + ' L' }
+console.log('form 11:', watering(), '|', watering({ crop: 'basil', liters: 2 }))
+// Form 11b: array parameter requested by starter.
+function area([rows, columns]) { return rows * columns }
+console.log('form 11b:', area([3, 4]))
+const weekly = { Mon: 2, Thu: 3 }
+for (const [day, liters] of Object.entries(weekly)) console.log('form 12 object:', day, liters)
+const pots = new Map([['B2', 4], ['C1', 2]])
+for (const [bed, count] of pots) console.log('form 12 Map:', bed, count)
+\end{lstlisting}
+
+\textbf{Output:}
+
+\begin{lstlisting}
+form 12 object: Mon 2
+form 12 object: Thu 3
+form 12 Map: B2 4
+form 12 Map: C1 2
+\end{lstlisting}
+
+\textbf{Use it when:} each watering day or Map entry needs a key and a
+value.
+
+\textbf{Watch out:} Object.entries gives string keys. A Map preserves
+its key types and insertion order.
+
+Plain assignment equivalent (in its own scope):
+
+\begin{lstlisting}
+for (const entry of Object.entries(weekly)) {
+ const day = entry[0]
+ const liters = entry[1]
+ console.log(day, liters)
+}
+for (const entry of pots) {
+ const bed = entry[0]
+ const count = entry[1]
+ console.log(bed, count)
+}
+\end{lstlisting}
+
+\section{Rest and spread}\label{rest-and-spread}
+
+Rest collects remaining items in a binding pattern:
+\texttt{const \{ id,\allowbreak{} .\allowbreak{}.\allowbreak{}.\allowbreak{}details \} =\allowbreak{} bed}.
+Spread expands values in an expression:
+\texttt{const copy =\allowbreak{} \{ .\allowbreak{}.\allowbreak{}.\allowbreak{}bed \}}.
+Both make shallow containers. Neither deep-copies sensor. Array rest
+collects after a position; object rest excludes named properties.
+
+\section{Five pitfalls}\label{five-pitfalls}
+
+All five run in js/pitfalls.mjs. The thrown errors are deliberate
+experiments and are caught.
+
+\subsection{Pitfall 1}\label{pitfall-1}
+
+\begin{lstlisting}
+pitfall 1: undefined TypeError: Cannot destructure property 'liters' of 'source' as it is undefined.
+pitfall 1: null TypeError: Cannot destructure property 'liters' of 'source' as it is null.
+\end{lstlisting}
+
+Neither undefined nor null can supply properties, so destructuring
+throws TypeError.
+
+\subsection{Pitfall 2}\label{pitfall-2}
+
+\begin{lstlisting}
+pitfall 2: undefined 1
+pitfall 2: undefined 1
+pitfall 2: null null
+\end{lstlisting}
+
+The default is used only for undefined; the first source is missing
+liters, the second explicitly sets it to undefined, and null remains
+null.
+
+\subsection{Pitfall 3}\label{pitfall-3}
+
+\begin{lstlisting}
+pitfall 3: SyntaxError: Unexpected token '='
+pitfall 3 fixed: 2
+\end{lstlisting}
+
+A leading brace is parsed as a block; parentheses turn the pattern into
+an assignment expression. The invalid code is compiled inside new
+Function so its SyntaxError can be caught.
+
+\subsection{Pitfall 4}\label{pitfall-4}
+
+\begin{lstlisting}
+pitfall 4: 10 true {"crop":"basil"}
+\end{lstlisting}
+
+The sensor binding shares the original nested object; changing it
+changes the original, while rest only creates a shallow outer object.
+
+\subsection{Pitfall 5}\label{pitfall-5}
+
+\begin{lstlisting}
+pitfall 5: basil 2 | 2 basil
+\end{lstlisting}
+
+Object bindings follow names regardless of property order, while array
+bindings follow positions.
+
+\section{TypeScript T1-T5}\label{typescript-t1-t5}
+
+Examples are in ts/types.ts. strict and noUncheckedIndexedAccess stay
+enabled.
+
+\subsection{T1}\label{t1}
+
+In \{ a: string \}, string is the new variable name. The correct
+annotation is const \{ a \}: \{ a: string \} = source. The two bindings
+both contain basil.
+
+\begin{lstlisting}
+T1: basil basil
+\end{lstlisting}
+
+\subsection{T2}\label{t2}
+
+tray(): {[}number, string{]} fixes the length and the type at each
+position. as const infers readonly {[}4, "mint"{]}, keeping literal
+types. Readonly is a compile-time restriction; it does not freeze the
+runtime array.
+
+\begin{lstlisting}
+T2: 12 basil 4 mint
+\end{lstlisting}
+
+\subsection{T3}\label{t3}
+
+An ordinary string{[}{]} may be empty. first is string \textbar{}
+undefined. The branch checks undefined before toUpperCase. fallback is
+string because its default removes undefined.
+
+\begin{lstlisting}
+T3: undefined empty no pot
+\end{lstlisting}
+
+\subsection{T4}\label{t4}
+
+For label?: string \textbar{} null, the binding without a default has
+type string \textbar{} null \textbar{} undefined. With a default it has
+type string \textbar{} null. The actual null remains null; the missing
+field becomes unlabelled.
+
+\begin{lstlisting}
+T4: null null unlabelled
+\end{lstlisting}
+
+\subsection{T5}\label{t5}
+
+The deliberate experiment misspells liters as litres. Removing only the
+suppression produced the actual diagnostic below. It was then restored
+on that one line. The fixed binding uses liters. The runtime experiment
+shows undefined for the wrong key and 2 for the corrected key. tsx runs
+code but does not perform the separate type check.
+
+\begin{lstlisting}
+T5: undefined 2
+\end{lstlisting}
+
+Actual diagnostic, captured in logs/t5-diagnostic.txt (expected exit 2):
+
+\begin{lstlisting}
+.compiler-experiments/t5-unsuppressed.tsx(27,9): error TS2339: Property 'litres' does not exist on type '{ liters: number; }'.
+\end{lstlisting}
+
+\section{Props and children - Day 2}\label{props-and-children---day-2}
+
+Both props files run P1-P7 using renderToStaticMarkup. The snippets
+below are from ts/props.tsx; js/props.jsx uses the same components
+without annotations. Shared types/imports:
+
+\begin{lstlisting}
+import type { ReactNode, PropsWithChildren, ComponentProps } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
+type CardProps = { title: string; children?: ReactNode }
+\end{lstlisting}
+
+\subsection{P1}\label{p1}
+
+\begin{lstlisting}
+function CardA(props: CardProps) { return <section><h2>{props.title}</h2>{props.children}</section> }
+function CardB({ title, children }: CardProps) { return <section><h2>{title}</h2>{children}</section> }
+\end{lstlisting}
+
+A component gets one props object. CardA reads its properties directly;
+CardB binds the same properties in its parameter. That combines form 5
+(named properties) with form 11 (parameter patterns). Neither version
+changes what React receives.
+
+Real output (the JS and TS runs agree):
+
+\begin{lstlisting}
+P1 A: <section><h2>Balcony</h2>basil</section>
+P1 B: <section><h2>Balcony</h2>basil</section>
+\end{lstlisting}
+
+\subsection{P2}\label{p2}
+
+\begin{lstlisting}
+<CardB title="Balcony">mint</CardB>
+<CardB title="Balcony" children="mint" />
+\end{lstlisting}
+
+The content between tags becomes the children property. These two calls
+render the same HTML. Missing children is allowed and renders nothing;
+it is not a second argument to the component.
+
+Real output (the JS and TS runs agree):
+
+\begin{lstlisting}
+P2 content: <section><h2>Balcony</h2>mint</section>
+P2 attribute: <section><h2>Balcony</h2>mint</section>
+\end{lstlisting}
+
+\subsection{P3}\label{p3}
+
+\begin{lstlisting}
+const cases: [string, ReactNode][] = [
+  ['string', 'basil'], ['number', 3], ['element', <b>mint</b>],
+  ['elements', [<b key="b">basil</b>, <i key="m">mint</i>]],
+  ['undefined', undefined], ['null', null], ['false', false]
+]
+for (const [name, child] of cases) console.log('P3 ' + name + ':', renderToStaticMarkup(<section>{child}</section>))
+function RenderCrop({ children }: { children: (crop: string) => ReactNode }) {
+  return <section>{children('mint')}</section>
+}
+<RenderCrop>{crop => <b>{crop}</b>}</RenderCrop>
+\end{lstlisting}
+
+Strings and numbers render as text; elements render as HTML. Several
+elements retain their order. undefined, null and false leave no visible
+content. A function is not an ordinary ReactNode: passing it directly
+warns and leaves the section empty. RenderCrop instead accepts a
+function in its own explicit type and calls it with mint. The returned
+element is what React renders. The direct function and object failures
+are deliberate experiments in the JS helper invalidChildren(), also
+called by the TS run, so TS needs no suppression or unsafe cast.
+
+Real output (the JS and TS runs agree):
+
+\begin{lstlisting}
+P3 string: <section>basil</section>
+P3 number: <section>3</section>
+P3 element: <section><b>mint</b></section>
+P3 elements: <section><b>basil</b><i>mint</i></section>
+P3 undefined: <section></section>
+P3 null: <section></section>
+P3 false: <section></section>
+P3 function: <section></section>
+P3 object deliberate experiment: Error: Objects are not valid as a React child (found: object with keys {crop}). If you meant to render a collection of children, use an array instead.
+P3 render prop: <section><b>mint</b></section>
+\end{lstlisting}
+
+The JS probe really passes
+\texttt{\textless{}\allowbreak{}section\textgreater{}\allowbreak{}\{grow\}\textless{}\allowbreak{}/\allowbreak{}section\textgreater{}\allowbreak{}}
+where
+\texttt{grow =\allowbreak{} () =\allowbreak{}\textgreater{}\allowbreak{} \textless{}\allowbreak{}b\textgreater{}\allowbreak{}mint\textless{}\allowbreak{}/\allowbreak{}b\textgreater{}\allowbreak{}},
+and
+\texttt{\textless{}\allowbreak{}section\textgreater{}\allowbreak{}\{\{ crop:\allowbreak{} 'mint' \}\}\textless{}\allowbreak{}/\allowbreak{}section\textgreater{}\allowbreak{}}.
+The console capture forwards the original React arguments to
+console.log, so the raw \texttt{\%s} placeholders and following
+substitution arguments are preserved:
+
+\begin{lstlisting}
+React warning: Functions are not valid as a React child. This may happen if you return %s instead of <%s /> from render. Or maybe you meant to call this function rather than return it. grow grow
+\end{lstlisting}
+
+\subsection{P4}\label{p4}
+
+\begin{lstlisting}
+function Frame({ title, children, ...rest }: CardProps & ComponentProps<'section'>) {
+  return <section {...rest}><h2>{title}</h2>{children}</section>
+}
+const dom: ComponentProps<'section'> = { id: 'bed-B2', className: 'from-spread' }
+<Frame title="Water" {...dom}>2 L</Frame>
+<section {...dom} className="explicit">basil</section>
+<section className="explicit" {...dom}>basil</section>
+\end{lstlisting}
+
+Rest collects all properties except title and children. Spreading rest
+forwards id and className onto the section, while children remains body
+content and title becomes a heading. React writes className as class in
+HTML. When values conflict, the later property wins. The TS DOM type
+makes className optional: it describes a normal forwarding component.
+
+Real output (the JS and TS runs agree):
+
+\begin{lstlisting}
+P4 rest: <section id="bed-B2" class="from-spread"><h2>Water</h2>2 L</section>
+P4 explicit last: <section id="bed-B2" class="explicit">basil</section>
+P4 spread last: <section class="from-spread" id="bed-B2">basil</section>
+\end{lstlisting}
+
+\subsection{P5}\label{p5}
+
+\begin{lstlisting}
+function Slots({ header, footer, children }: PropsWithChildren<{ header: ReactNode; footer: ReactNode }>) {
+  return <article><header>{header}</header><main>{children}</main><footer>{footer}</footer></article>
+}
+function Flow({ children }: PropsWithChildren) { return <article>{children}</article> }
+<Slots header={<h2>Water</h2>} footer={<small>Evening</small>}><p>2 L</p></Slots>
+<Flow><header><h2>Water</h2></header><main><p>2 L</p></main><footer><small>Evening</small></footer></Flow>
+\end{lstlisting}
+
+Slots fixes the header/body/footer structure and names the roles. I
+would choose it for a consistent watering card whose callers supply
+content but not layout. Flow leaves structure and order to the caller; I
+would choose it for a flexible garden journal with mixed sections. They
+can render identical HTML here, but Flow does not enforce the slot
+layout.
+
+Real output (the JS and TS runs agree):
+
+\begin{lstlisting}
+P5 slots: <article><header><h2>Water</h2></header><main><p>2 L</p></main><footer><small>Evening</small></footer></article>
+P5 children: <article><header><h2>Water</h2></header><main><p>2 L</p></main><footer><small>Evening</small></footer></article>
+\end{lstlisting}
+
+\subsection{P6}\label{p6}
+
+\begin{lstlisting}
+function DefaultCard({ title = 'Balcony', children }: { title?: string | null; children?: ReactNode }) {
+  return <section><h2>{title}</h2>{children}</section>
+}
+<DefaultCard />
+<DefaultCard title={undefined} />
+<DefaultCard title={null} />
+\end{lstlisting}
+
+This is the form 7 default inside a form 11 parameter. A missing title
+and an explicit undefined both use Balcony. Null is an explicit value
+and does not activate the default; React renders it as no heading
+content. An empty string would also stay empty. A field default does not
+protect destructuring an entire null props object.
+
+Real output (the JS and TS runs agree):
+
+\begin{lstlisting}
+P6 missing: <section><h2>Balcony</h2></section>
+P6 undefined: <section><h2>Balcony</h2></section>
+P6 null: <section><h2></h2></section>
+\end{lstlisting}
+
+\subsection{P7}\label{p7}
+
+\begin{lstlisting}
+function GardenButton({ children, ...rest }: ComponentProps<'button'>) {
+  return <button {...rest}>{children}</button>
+}
+<CardB title="Seeds">{3}</CardB>
+<Flow />
+<GardenButton type="button" disabled>Water</GardenButton>
+\end{lstlisting}
+
+children?: ReactNode permits missing children, text, numbers, elements,
+arrays of nodes and empty values such as null/false. It rejects a
+function or an arbitrary object. PropsWithChildren adds optional
+ReactNode children to P; it does not make other required props optional
+and does not turn a function into a node.
+ComponentProps\textless\textquotesingle button\textquotesingle\textgreater{}
+reuses React button props, including children, type, disabled and event
+types. It rejects href (an anchor prop) and disabled="yes". Runtime
+rendering alone does not check these types: tsx executes, while tsc
+checks. The deliberate rejected examples were each compiled separately
+in disposable files and removed; exact sources, exit codes and
+diagnostics are in logs/compiler-diagnostics.txt.
+
+Real output (the JS and TS runs agree):
+
+\begin{lstlisting}
+P7 ReactNode: <section><h2>Seeds</h2>3</section>
+P7 PropsWithChildren: <article></article>
+P7 button: <button type="button" disabled="">Water</button>
+\end{lstlisting}
+
+\section{JavaScript versus
+TypeScript}\label{javascript-versus-typescript}
+
+Types do not change destructuring at runtime. These are actual strict
+compiler diagnostics, not predicted messages. Every case was an isolated
+deliberate experiment. Full diagnostics and experiment sources:
+\url{logs/compiler-diagnostics.txt}.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1600}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2200}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2200}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.4000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Form
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Same behavior
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Type information
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Observed compiler error
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1: tuple return & Positions keep their meaning & {[}number, string{]} &
+TS2322: Type \textquotesingle number\textquotesingle{} is not assignable
+to type \textquotesingle string\textquotesingle. \\
+6 / T1: rename & The name after the colon is the binding & Type after
+the whole pattern & TS2304: Cannot find name
+\textquotesingle a\textquotesingle. \\
+7: default & Only undefined activates the default & Include null when
+allowed & TS18047: \textquotesingle label\textquotesingle{} is possibly
+\textquotesingle null\textquotesingle. \\
+9 / T3: array item & An empty array has no first item & string{[}{]}
+gives string \textbar{} undefined & TS18048:
+\textquotesingle first\textquotesingle{} is possibly
+\textquotesingle undefined\textquotesingle. \\
+10: computed key & The key expression selects a property & keyof typeof
+bed & TS2322: Type \textquotesingle"litres"\textquotesingle{} is not
+assignable to type \textquotesingle"liters"\textquotesingle. \\
+11: parameter & Properties are read from one object & Optional fields
+for \{\} defaults & TS2345: Argument of type
+\textquotesingle\{\}\textquotesingle{} is not assignable to parameter of
+type \textquotesingle\{ liters: number; \}\textquotesingle. \\
+12: Map loop & Entries contain key and value & Map\textless string,
+number\textgreater{} & TS2345: Argument of type
+\textquotesingle string\textquotesingle{} is not assignable to parameter
+of type \textquotesingle number\textquotesingle. \\
+T5: missing property & A wrong key reads undefined in JS & Correct
+property spelling & TS2339: Property
+\textquotesingle litres\textquotesingle{} does not exist on type
+\textquotesingle\{ liters: number; \}\textquotesingle. \\
+P7: children & React decides runtime rendering & ReactNode & TS2322:
+Type \textquotesingle() =\textgreater{} string\textquotesingle{} is not
+assignable to type \textquotesingle ReactNode\textquotesingle. \\
+P7: DOM forwarding & Props spread in order &
+\texttt{ComponentProps\textless{}\allowbreak{}'button'\textgreater{}\allowbreak{}}
+& TS2322: Type \textquotesingle string\textquotesingle{} is not
+assignable to type \textquotesingle boolean \textbar{}
+undefined\textquotesingle. \\
+\end{longtable}
+}
+
+\section{Bonus 1: LaTeX}\label{bonus-1-latex}
+
+The complete guide, including all twelve forms, pitfalls, T1-T5, P1-P7,
+the comparison table, the depth experiments, the real-code cases and
+this log, is included in output/pdf/guide.tex and output/pdf/guide.pdf.
+The LaTeX is generated from this README rather than a shortened version.
+Code uses listings, the comparison uses a real longtable, and the
+contents page links to the sections.
+
+Tools: Pandoc 3.14 and Tectonic 0.17.0. With both executables on PATH,
+rebuild from the project root:
+
+\begin{lstlisting}
+powershell -ExecutionPolicy Bypass -File scripts/build-guide.ps1
+\end{lstlisting}
+
+The script also accepts -Pandoc and -Tectonic executable paths.
+scripts/latex-layout.lua sets wrapping paragraph widths for the real
+comparison table. It runs Pandoc with -\/-from=gfm -\/-to=latex
+-\/-standalone -\/-listings -\/-toc, then Tectonic with -\/-keep-logs.
+The build log is output/pdf/guide.log. The output PDF is visually
+checked after compilation. Runtime code needs only the npm dependencies;
+rebuilding the PDF additionally needs these two document tools and a
+first-run TeX package download.
+
+\section{Bonus 2: Depth}\label{bonus-2-depth}
+
+These experiments investigate iteration, evaluation order, copying and
+type inference. Predictions were recorded before execution in
+experiments.md. They run with npm run all.
+
+\subsection{D1: An array pattern asks for an
+iterator}\label{d1-an-array-pattern-asks-for-an-iterator}
+
+\begin{lstlisting}
+const [letter, ...letters] = 'mint'
+const [crop, ...otherCrops] = new Set(['basil', 'mint', 'basil', 'sage'])
+const [[bed, liters]] = new Map([['B2', 2], ['C1', 3]])
+console.log('D1 iterables:', letter, letters.join(''), '|', crop, JSON.stringify(otherCrops), '|', bed, liters)
+const events = []
+function* harvest() {
+  try { events.push('start'); yield 'basil'; events.push('second'); yield 'mint' }
+  finally { events.push('closed') }
+}
+const [firstCrop] = harvest()
+console.log('D1 early close:', firstCrop, JSON.stringify(events))
+try { const [first] = { 0: 'basil', length: 1 }; console.log(first) }
+catch (error) { console.log('D1 deliberate experiment:', error.name + ': ' + error.message) }
+\end{lstlisting}
+
+\begin{lstlisting}
+D1 iterables: m int | basil ["mint","sage"] | B2 2
+D1 early close: basil ["start","closed"]
+D1 deliberate experiment: TypeError: {(intermediate value)(intermediate value)} is not iterable
+\end{lstlisting}
+
+A string yields characters, a Set yields unique entries in insertion
+order, and a Map yields key/value pairs. The nested Map pattern takes
+the first entry apart. The generator trace contains start and closed but
+not second: taking one item closes the unfinished iterator and runs
+finally. A numeric property plus length does not make an object
+iterable; the deliberate array-like experiment throws. This matters for
+generators holding resources: a short pattern can end iteration early.
+Array rest would consume the remaining iterator instead.
+
+\subsection{D2: A default is evaluated only when
+needed}\label{d2-a-default-is-evaluated-only-when-needed}
+
+\begin{lstlisting}
+const defaults = []
+function fallback(label, value) { defaults.push(label); return value }
+const [pots = fallback('pots', 3), capacity = fallback('capacity', pots * 2),
+  explicitNull = fallback('null', 9), zero = fallback('zero', 9)] = [undefined, undefined, null, 0]
+console.log('D2 evaluation:', pots, capacity, explicitNull, zero, JSON.stringify(defaults))
+\end{lstlisting}
+
+\begin{lstlisting}
+D2 evaluation: 3 6 null 0 ["pots","capacity"]
+\end{lstlisting}
+
+The pots fallback runs first. The capacity fallback can then read pots
+and calculates six. Null and zero are present values, so their fallback
+calls never execute. The trace records only pots and capacity. I would
+avoid expensive or state-changing defaults unless this order is
+intentional; the same pattern can do different work depending on the
+incoming values.
+
+\subsection{D3: Object rest copies values, not
+descriptors}\label{d3-object-rest-copies-values-not-descriptors}
+
+\begin{lstlisting}
+const tag = Symbol('tag')
+let reads = 0
+const record = Object.create({ inherited: 'not copied' })
+Object.defineProperties(record, {
+  id: { value: 'B2', enumerable: true },
+  crop: { get() { reads++; return 'basil' }, enumerable: true },
+  sensor: { value: { moisture: 34 }, enumerable: true },
+  hidden: { value: 'not copied', enumerable: false },
+  [tag]: { value: 'outdoor', enumerable: true }
+})
+const { id, ...rest } = record
+rest.sensor.moisture = 10
+console.log('D3 rest:', id, JSON.stringify(Reflect.ownKeys(rest).map(String)), reads,
+  rest[tag], 'hidden' in rest, 'inherited' in rest, record.sensor.moisture)
+\end{lstlisting}
+
+\begin{lstlisting}
+D3 rest: B2 ["crop","sensor","Symbol(tag)"] 1 outdoor false false 10
+\end{lstlisting}
+
+The own enumerable crop, sensor and symbol properties are copied; id is
+excluded by the pattern. Inherited and non-enumerable properties are
+absent. The crop getter runs once when rest reads its value, and rest
+receives a data property rather than the getter itself. JSON alone would
+hide symbol keys, so Reflect.ownKeys is used to inspect the result. The
+sensor is still shared: mutating the rest sensor changes the original
+reading to 10.
+
+\subsection{D4: Destructuring can assign to properties and catch
+bindings}\label{d4-destructuring-can-assign-to-properties-and-catch-bindings}
+
+\begin{lstlisting}
+const targets = { east: 'basil', west: 'mint' }
+;[targets.east, targets.west] = [targets.west, targets.east]
+console.log('D4 targets:', JSON.stringify(targets))
+try { throw new Error('B2 needs water') }
+catch ({ message }) { console.log('D4 catch:', message) }
+\end{lstlisting}
+
+\begin{lstlisting}
+D4 targets: {"east":"mint","west":"basil"}
+D4 catch: B2 needs water
+\end{lstlisting}
+
+The right-hand array is evaluated before either target is assigned, so
+the two existing object properties swap safely. There are no new
+east/west local variables. The catch parameter reads message from the
+thrown Error. This is convenient for a known object, but destructuring
+an arbitrary thrown null value would itself fail; a defensive TypeScript
+catch normally narrows unknown before reading message.
+
+\subsection{D5: Pulling apart types and generic component
+props}\label{d5-pulling-apart-types-and-generic-component-props}
+
+\begin{lstlisting}
+import type { ReactNode } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
+// Bonus 2: destructuring types, not runtime values.
+type First<T extends readonly unknown[]> = T extends readonly [infer H, ...unknown[]] ? H : never
+type Rest<T extends readonly unknown[]> = T extends readonly [unknown, ...infer R] ? R : []
+function watering(crop: string, liters: number) { return crop + ': ' + liters + ' L' }
+type WateringArguments = Parameters<typeof watering>
+const head: First<readonly [string, number]> = 'basil'
+const tail: Rest<readonly [string, number]> = [2]
+const args: WateringArguments = [head, tail[0]]
+console.log('D5 types:', head, JSON.stringify(tail), watering(...args))
+function CropList<T>({ items, renderItem }: { items: readonly T[]; renderItem: (item: T) => ReactNode }) {
+  return <ul>{items.map((item, index) => <li key={index}>{renderItem(item)}</li>)}</ul>
+}
+console.log('D5 generic props:', renderToStaticMarkup(
+  <CropList items={[{ crop: 'basil', liters: 2 }]} renderItem={({ crop, liters }) => <b>{crop}: {liters} L</b>} />
+))
+\end{lstlisting}
+
+\begin{lstlisting}
+D5 types: basil [2] basil: 2 L
+D5 generic props: <ul><li><b>basil: 2 L</b></li></ul>
+\end{lstlisting}
+
+First extracts the head of a nonempty readonly tuple; Rest infers the
+remaining tuple. They operate only during type checking.
+First\textless{[}{]}\textgreater{} becomes never and
+Rest\textless{[}{]}\textgreater{} becomes {[}{]}, rather than inventing
+a runtime value. Parameters produces {[}crop: string, liters: number{]}.
+Spreading that tuple supplies the original function arguments. CropList
+infers the item object type from items; its renderItem parameter
+destructures crop and liters with that inferred type. The generic type
+connects the data to the rendering callback without an unsafe cast.
+
+References:
+\href{https://tc39.es/ecma262/2024/multipage/ecmascript-language-expressions.html\#sec-destructuring-assignment}{ECMAScript
+destructuring assignment and iterator closing},
+\href{https://www.typescriptlang.org/docs/handbook/2/conditional-types.html}{TypeScript
+conditional types and infer}, and
+\href{https://www.typescriptlang.org/docs/handbook/utility-types.html\#parameterstype}{Parameters
+utility type}. The iterator and conditional-type explanations above
+follow these references; the output is from the local runs.
+
+\section{Bonus 3: Real code}\label{bonus-3-real-code}
+
+These six cases come from the Assignment 3 Task Manager starter, the
+installed TypeScript 5.8.3 package, and p-map v7.0.3. Source locations
+are recorded explicitly; the examples below are analyses of existing
+code. The rewrites show the same extraction behavior within the original
+surrounding code, rather than standalone replacements for the whole
+application.
+
+\subsection{1. Task Manager state
+tuple}\label{1-task-manager-state-tuple}
+
+Source: Downloads/starter.zip -\textgreater{} starter/src/App.tsx, line
+37.
+
+Form 1: values by position.
+
+Original extraction:
+
+\begin{lstlisting}
+const [tasks, dispatch] = useReducer(taskReducer, [])
+\end{lstlisting}
+
+Without destructuring:
+
+\begin{lstlisting}
+const statePair = useReducer(taskReducer, [])
+const tasks = statePair[0]
+const dispatch = statePair[1]
+\end{lstlisting}
+
+useReducer returns the current task list and dispatch function. The
+pattern names the two positions and keeps the hook call to one
+evaluation. This improves readability because React hook pairs have
+stable positional roles.
+
+\subsection{2. Task Manager React
+props}\label{2-task-manager-react-props}
+
+Source: Downloads/starter.zip -\textgreater{} starter/src/TaskRow.tsx,
+line 5.
+
+Forms 5 and 11: object properties in a parameter.
+
+Original extraction:
+
+\begin{lstlisting}
+export default function TaskRow({ task, onNext, onDelete }: TaskRowProps) {
+\end{lstlisting}
+
+Without destructuring:
+
+\begin{lstlisting}
+export default function TaskRow(props: TaskRowProps) {
+  const task = props.task
+  const onNext = props.onNext
+  const onDelete = props.onDelete
+  // The original component body follows.
+}
+\end{lstlisting}
+
+task is data; onNext and onDelete are callback props. There is no
+children field in TaskRowProps and the call in App.tsx lines 25-30 is
+self-closing. The buttons and task title are created inside TaskRow, so
+they are not children supplied by its caller. React key belongs to
+element identity and is not an ordinary TaskRow prop.
+
+\subsection{3. TypeScript pattern
+formatting}\label{3-typescript-pattern-formatting}
+
+Source: node\_modules/typescript/lib/typescript.js, line 3631
+(TypeScript 5.8.3).
+
+Forms 5 and 11: named fields in a parameter.
+
+Original extraction:
+
+\begin{lstlisting}
+function patternText({ prefix, suffix }) {
+\end{lstlisting}
+
+Without destructuring:
+
+\begin{lstlisting}
+function patternText(pattern) {
+  const prefix = pattern.prefix
+  const suffix = pattern.suffix
+  return `${prefix}*${suffix}`
+}
+\end{lstlisting}
+
+The function only needs prefix and suffix. A short parameter pattern
+makes its inputs visible without an extra alias. The plain form makes
+the original pattern object available if the function later needs more
+properties.
+
+\subsection{4. TypeScript nested watcher
+entry}\label{4-typescript-nested-watcher-entry}
+
+Source: node\_modules/typescript/lib/typescript.js, line 7802
+(TypeScript 5.8.3).
+
+Form 9: object -\textgreater{} array -\textgreater{} nested object.
+
+Original extraction:
+
+\begin{lstlisting}
+const { value: [dirPath, { dirName, options, fileNames }] } = result;
+\end{lstlisting}
+
+Without destructuring:
+
+\begin{lstlisting}
+const entry = result.value
+const dirPath = entry[0]
+const details = entry[1]
+const dirName = details.dirName
+const options = details.options
+const fileNames = details.fileNames
+\end{lstlisting}
+
+This is the case where I find destructuring less readable. One line
+crosses three shapes and hides the intermediate watcher record. The
+surrounding code first asserts that the iterator is not done. Naming
+entry and details makes that assumption and the record boundary easier
+to inspect. The shorter pattern is valid, but the explicit version is
+easier to debug when a watcher entry is malformed.
+
+\subsection{5. TypeScript version
+parser}\label{5-typescript-version-parser}
+
+Source: node\_modules/typescript/lib/typescript.js, line 4872
+(TypeScript 5.8.3).
+
+Forms 2 and 4: skip a regex match and default missing capture groups.
+
+Original extraction:
+
+\begin{lstlisting}
+const [, major, minor = "0", patch = "0", prerelease = "", build2 = ""] = match;
+\end{lstlisting}
+
+Without destructuring:
+
+\begin{lstlisting}
+const major = match[1]
+const minor = match[2] === undefined ? '0' : match[2]
+const patch = match[3] === undefined ? '0' : match[3]
+const prerelease = match[4] === undefined ? '' : match[4]
+const build2 = match[5] === undefined ? '' : match[5]
+\end{lstlisting}
+
+The first comma skips the complete regex match. Later positions are
+capture groups. The defaults handle absent groups and retain explicit
+empty strings. This is compact but positional: changing the regular
+expression requires checking every capture index.
+
+\subsection{6. p-map dependent option
+defaults}\label{6-p-map-dependent-option-defaults}
+
+Source:
+\href{https://github.com/sindresorhus/p-map/blob/c9831c7a9b7baa6e986428cc7f1c83af694b5c8e/index.js\#L177}{p-map
+v7.0.3 index.js, lines 177-184}.
+
+Forms 7 and 11: defaults in an options parameter.
+
+Original extraction:
+
+\begin{lstlisting}
+export function pMapIterable(
+    iterable,
+    mapper,
+    {
+        concurrency = Number.POSITIVE_INFINITY,
+        backpressure = concurrency,
+    } = {},
+) {
+\end{lstlisting}
+
+Without destructuring:
+
+\begin{lstlisting}
+function readOptions(options = {}) {
+  const concurrency = options.concurrency === undefined
+    ? Number.POSITIVE_INFINITY : options.concurrency
+  const backpressure = options.backpressure === undefined
+    ? concurrency : options.backpressure
+  return { concurrency, backpressure }
+}
+\end{lstlisting}
+
+In pMapIterable, backpressure defaults to the already-bound concurrency.
+Omitting the whole options argument uses \{\}, and omitting either field
+uses its default. Null does not activate a default. The later validation
+in the actual library checks allowed numeric ranges; destructuring
+itself does not validate them. The rewrite isolates option extraction
+and leaves that surrounding validation unchanged.
+
+Source notes: the Task Manager cases were read from the original local
+starter.zip, not from the completed Assignment 3 repository. Installed
+TypeScript source is pinned by package-lock.json; its project is
+\href{https://github.com/microsoft/TypeScript}{microsoft/TypeScript}.
+The p-map reference is pinned to commit
+c9831c7a9b7baa6e986428cc7f1c83af694b5c8e, so future edits cannot shift
+this cited version. The small excerpts retain their original source
+spelling.
+
+\section{Bonus 4: Git repository}\label{bonus-4-git-repository}
+
+\href{https://github.com/Hurulayn0/assignment4-field-guide}{assignment4-field-guide}
+
+The repository is public: the instructor can read its source and history
+without an invitation. node\_modules, local npm caches and disposable
+compiler sources are ignored. A clean clone is verified with npm
+install, npm run all and npm run check.
+
+The history includes the initial plain JavaScript/TypeScript field guide
+on 15 November 2026, followed by separate React implementation, depth
+experiments, real-code analysis and final LaTeX/package verification
+stages on 16 November 2026. These are meaningful completed stages on
+their actual dates; no timestamps are backdated. The final published
+history contains at least five commits across those two dates. The
+instructor decides the bonus score.
+
+\section{My own log}\label{my-own-log}
+
+This assignment took a lot of my time. The points needing the most care
+in this part were defaults, null values, tuple positions and possibly
+missing array items.
+
+The entries below record actual experiment results. Predictions were
+recorded before running the checks.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Missing values and undefined used the defaults in forms 4 and 7, while
+  null stayed null. A default does not replace every empty-looking
+  value.
+\item
+  Deliberate experiment: destructuring undefined and null threw
+  TypeError. Both errors were caught; the exact messages are in the
+  pitfalls section above and output.txt.
+\item
+  Deliberate experiment: a bare object assignment produced
+  \texttt{SyntaxError:\allowbreak{} Unexpected token '=\allowbreak{}'}.
+  Parentheses fixed the parse, and the corrected result was 2.
+\item
+  The sensor binding remained shared. Changing its moisture value
+  changed the original record too; rest creates only a shallow outer
+  copy.
+\item
+  The empty typed array gave undefined. The default produced empty, and
+  the undefined check avoided calling toUpperCase on a missing value.
+\item
+  Deliberate T5 experiment: the misspelled property produced TS2339. The
+  wrong key gave undefined at runtime and the corrected key gave 2. The
+  exact compiler diagnostic is in logs/t5-diagnostic.txt.
+\item
+  In T1, the variable named string contained basil. The colon inside the
+  pattern renamed the binding; the type annotation belongs after the
+  whole pattern.
+\item
+  A direct function child produced the exact React warning in P3 and no
+  visible content. The render-prop component called its function and
+  rendered mint. The deliberately invalid object child threw a caught
+  Error.
+\item
+  All five P7 misuse cases failed strict checks as predicted. Exact
+  messages are recorded in logs/compiler-diagnostics.txt.
+\item
+  The generator closed after one value and ran finally, while the
+  array-like object was rejected. Object rest copied a symbol key that
+  JSON.stringify would not reveal; Reflect.ownKeys made it visible. Only
+  the two undefined positions called the D2 fallback.
+\end{enumerate}
+
+\end{document}

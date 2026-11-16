@@ -2,3 +2,9 @@ node_modules/
 .npm-cache/
 .compiler-experiments/
 dist/
+
+# Generated LaTeX intermediates
+output/pdf/*.aux
+output/pdf/*.toc
+output/pdf/*.out
+output/pdf/*.xdv
