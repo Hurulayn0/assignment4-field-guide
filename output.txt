@@ -4,7 +4,7 @@
 
 
 > destructuring-guide@0.0.0 js
-> node js/arrays.mjs && node js/objects.mjs && node js/params.mjs && node js/pitfalls.mjs && tsx js/props.jsx
+> node js/arrays.mjs && node js/objects.mjs && node js/params.mjs && node js/pitfalls.mjs && tsx js/props.jsx && node js/depth.mjs
 
 form 1: 5 7
 form 2: mint ["thyme","sage"]
@@ -57,9 +57,16 @@ P6 null: <section><h2></h2></section>
 P7 ReactNode: <section><h2>Seeds</h2>3</section>
 P7 PropsWithChildren: <article></article>
 P7 button: <button type="button" disabled="">Water</button>
+D1 iterables: m int | basil ["mint","sage"] | B2 2
+D1 early close: basil ["start","closed"]
+D1 deliberate experiment: TypeError: {(intermediate value)(intermediate value)} is not iterable
+D2 evaluation: 3 6 null 0 ["pots","capacity"]
+D3 rest: B2 ["crop","sensor","Symbol(tag)"] 1 outdoor false false 10
+D4 targets: {"east":"mint","west":"basil"}
+D4 catch: B2 needs water
 
 > destructuring-guide@0.0.0 ts
-> tsx ts/arrays.ts && tsx ts/objects.ts && tsx ts/params.ts && tsx ts/types.ts && tsx ts/props.tsx
+> tsx ts/arrays.ts && tsx ts/objects.ts && tsx ts/params.ts && tsx ts/types.ts && tsx ts/props.tsx && tsx ts/depth.tsx
 
 form 1: 5 7
 form 2: mint ["thyme","sage"]
@@ -108,3 +115,5 @@ P6 null: <section><h2></h2></section>
 P7 ReactNode: <section><h2>Seeds</h2>3</section>
 P7 PropsWithChildren: <article></article>
 P7 button: <button type="button" disabled="">Water</button>
+D5 types: basil [2] basil: 2 L
+D5 generic props: <ul><li><b>basil: 2 L</b></li></ul>

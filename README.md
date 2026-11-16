@@ -3,7 +3,7 @@ Student number: 2200005795
 
 # Destructuring Field Guide
 
-This guide covers the twelve JavaScript and strict TypeScript forms, five pitfalls, T1-T5 and React P1-P7. The examples use a balcony garden theme. The optional depth, real-code and LaTeX sections are the next work stages.
+This guide covers the twelve JavaScript and strict TypeScript forms, five pitfalls, T1-T5 and React P1-P7. The examples use a balcony garden theme. Depth experiments are also implemented; real-code analysis and the LaTeX guide are the next stages.
 
 ## Run and scope
 
@@ -728,11 +728,130 @@ Types do not change destructuring at runtime. These are actual strict compiler d
 | P7: children | React decides runtime rendering | ReactNode | TS2322: Type '() => string' is not assignable to type 'ReactNode'. |
 | P7: DOM forwarding | Props spread in order | `ComponentProps<'button'>` | TS2322: Type 'string' is not assignable to type 'boolean \| undefined'. |
 
+## Bonus 2: Depth
+
+These experiments investigate iteration, evaluation order, copying and type inference. Predictions were recorded before execution in experiments.md. They run with npm run all.
+
+### D1: An array pattern asks for an iterator
+
+```js
+const [letter, ...letters] = 'mint'
+const [crop, ...otherCrops] = new Set(['basil', 'mint', 'basil', 'sage'])
+const [[bed, liters]] = new Map([['B2', 2], ['C1', 3]])
+console.log('D1 iterables:', letter, letters.join(''), '|', crop, JSON.stringify(otherCrops), '|', bed, liters)
+const events = []
+function* harvest() {
+  try { events.push('start'); yield 'basil'; events.push('second'); yield 'mint' }
+  finally { events.push('closed') }
+}
+const [firstCrop] = harvest()
+console.log('D1 early close:', firstCrop, JSON.stringify(events))
+try { const [first] = { 0: 'basil', length: 1 }; console.log(first) }
+catch (error) { console.log('D1 deliberate experiment:', error.name + ': ' + error.message) }
+```
+
+```text
+D1 iterables: m int | basil ["mint","sage"] | B2 2
+D1 early close: basil ["start","closed"]
+D1 deliberate experiment: TypeError: {(intermediate value)(intermediate value)} is not iterable
+```
+
+A string yields characters, a Set yields unique entries in insertion order, and a Map yields key/value pairs. The nested Map pattern takes the first entry apart. The generator trace contains start and closed but not second: taking one item closes the unfinished iterator and runs finally. A numeric property plus length does not make an object iterable; the deliberate array-like experiment throws. This matters for generators holding resources: a short pattern can end iteration early. Array rest would consume the remaining iterator instead.
+
+### D2: A default is evaluated only when needed
+
+```js
+const defaults = []
+function fallback(label, value) { defaults.push(label); return value }
+const [pots = fallback('pots', 3), capacity = fallback('capacity', pots * 2),
+  explicitNull = fallback('null', 9), zero = fallback('zero', 9)] = [undefined, undefined, null, 0]
+console.log('D2 evaluation:', pots, capacity, explicitNull, zero, JSON.stringify(defaults))
+```
+
+```text
+D2 evaluation: 3 6 null 0 ["pots","capacity"]
+```
+
+The pots fallback runs first. The capacity fallback can then read pots and calculates six. Null and zero are present values, so their fallback calls never execute. The trace records only pots and capacity. I would avoid expensive or state-changing defaults unless this order is intentional; the same pattern can do different work depending on the incoming values.
+
+### D3: Object rest copies values, not descriptors
+
+```js
+const tag = Symbol('tag')
+let reads = 0
+const record = Object.create({ inherited: 'not copied' })
+Object.defineProperties(record, {
+  id: { value: 'B2', enumerable: true },
+  crop: { get() { reads++; return 'basil' }, enumerable: true },
+  sensor: { value: { moisture: 34 }, enumerable: true },
+  hidden: { value: 'not copied', enumerable: false },
+  [tag]: { value: 'outdoor', enumerable: true }
+})
+const { id, ...rest } = record
+rest.sensor.moisture = 10
+console.log('D3 rest:', id, JSON.stringify(Reflect.ownKeys(rest).map(String)), reads,
+  rest[tag], 'hidden' in rest, 'inherited' in rest, record.sensor.moisture)
+```
+
+```text
+D3 rest: B2 ["crop","sensor","Symbol(tag)"] 1 outdoor false false 10
+```
+
+The own enumerable crop, sensor and symbol properties are copied; id is excluded by the pattern. Inherited and non-enumerable properties are absent. The crop getter runs once when rest reads its value, and rest receives a data property rather than the getter itself. JSON alone would hide symbol keys, so Reflect.ownKeys is used to inspect the result. The sensor is still shared: mutating the rest sensor changes the original reading to 10.
+
+### D4: Destructuring can assign to properties and catch bindings
+
+```js
+const targets = { east: 'basil', west: 'mint' }
+;[targets.east, targets.west] = [targets.west, targets.east]
+console.log('D4 targets:', JSON.stringify(targets))
+try { throw new Error('B2 needs water') }
+catch ({ message }) { console.log('D4 catch:', message) }
+```
+
+```text
+D4 targets: {"east":"mint","west":"basil"}
+D4 catch: B2 needs water
+```
+
+The right-hand array is evaluated before either target is assigned, so the two existing object properties swap safely. There are no new east/west local variables. The catch parameter reads message from the thrown Error. This is convenient for a known object, but destructuring an arbitrary thrown null value would itself fail; a defensive TypeScript catch normally narrows unknown before reading message.
+
+### D5: Pulling apart types and generic component props
+
+```tsx
+import type { ReactNode } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
+// Bonus 2: destructuring types, not runtime values.
+type First<T extends readonly unknown[]> = T extends readonly [infer H, ...unknown[]] ? H : never
+type Rest<T extends readonly unknown[]> = T extends readonly [unknown, ...infer R] ? R : []
+function watering(crop: string, liters: number) { return crop + ': ' + liters + ' L' }
+type WateringArguments = Parameters<typeof watering>
+const head: First<readonly [string, number]> = 'basil'
+const tail: Rest<readonly [string, number]> = [2]
+const args: WateringArguments = [head, tail[0]]
+console.log('D5 types:', head, JSON.stringify(tail), watering(...args))
+function CropList<T>({ items, renderItem }: { items: readonly T[]; renderItem: (item: T) => ReactNode }) {
+  return <ul>{items.map((item, index) => <li key={index}>{renderItem(item)}</li>)}</ul>
+}
+console.log('D5 generic props:', renderToStaticMarkup(
+  <CropList items={[{ crop: 'basil', liters: 2 }]} renderItem={({ crop, liters }) => <b>{crop}: {liters} L</b>} />
+))
+```
+
+```text
+D5 types: basil [2] basil: 2 L
+D5 generic props: <ul><li><b>basil: 2 L</b></li></ul>
+```
+
+First extracts the head of a nonempty readonly tuple; Rest infers the remaining tuple. They operate only during type checking. First<[]> becomes never and Rest<[]> becomes [], rather than inventing a runtime value. Parameters<typeof watering> produces [crop: string, liters: number]. Spreading that tuple supplies the original function arguments. CropList infers the item object type from items; its renderItem parameter destructures crop and liters with that inferred type. The generic type connects the data to the rendering callback without an unsafe cast.
+
+References: [ECMAScript destructuring assignment and iterator closing](https://tc39.es/ecma262/2024/multipage/ecmascript-language-expressions.html#sec-destructuring-assignment), [TypeScript conditional types and infer](https://www.typescriptlang.org/docs/handbook/2/conditional-types.html), and [Parameters utility type](https://www.typescriptlang.org/docs/handbook/utility-types.html#parameterstype). The iterator and conditional-type explanations above follow these references; the output is from the local runs.
+
 ## Repository and remaining work
 
 Public repository: [assignment4-field-guide](https://github.com/Hurulayn0/assignment4-field-guide).
 
-The core destructuring and React examples are implemented and locally verified. Depth experiments, real-code analysis and the LaTeX/PDF guide are the remaining stages. Bonus 4 will be assessed against the actual dated history and public access.
+The core destructuring and React examples are implemented and locally verified. Depth experiments are verified. Real-code analysis and the LaTeX/PDF guide are the remaining stages. Bonus 4 will be assessed against the actual dated history and public access.
 
 ## My own log
 
@@ -750,3 +869,5 @@ The entries below record actual experiment results. Predictions were recorded be
 
 8. A direct function child produced the exact React warning in P3 and no visible content. The render-prop component called its function and rendered mint. The deliberately invalid object child threw a caught Error.
 9. All five P7 misuse cases failed strict checks as predicted. Exact messages are recorded in logs/compiler-diagnostics.txt.
+
+10. The generator closed after one value and ran finally, while the array-like object was rejected. Object rest copied a symbol key that JSON.stringify would not reveal; Reflect.ownKeys made it visible. Only the two undefined positions called the D2 fallback.
