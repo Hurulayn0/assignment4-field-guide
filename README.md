@@ -3,7 +3,7 @@ Student number: 2200005795
 
 # Destructuring Field Guide
 
-This guide covers the twelve JavaScript and strict TypeScript forms, five pitfalls, T1-T5 and React P1-P7. The examples use a balcony garden theme. Depth experiments are also implemented; real-code analysis and the LaTeX guide are the next stages.
+This guide covers the twelve JavaScript and strict TypeScript forms, five pitfalls, T1-T5 and React P1-P7. The examples use a balcony garden theme. Depth experiments and sourced real-code analysis are also complete; the LaTeX guide and clean packaging are the final stage.
 
 ## Run and scope
 
@@ -847,11 +847,170 @@ First extracts the head of a nonempty readonly tuple; Rest infers the remaining 
 
 References: [ECMAScript destructuring assignment and iterator closing](https://tc39.es/ecma262/2024/multipage/ecmascript-language-expressions.html#sec-destructuring-assignment), [TypeScript conditional types and infer](https://www.typescriptlang.org/docs/handbook/2/conditional-types.html), and [Parameters utility type](https://www.typescriptlang.org/docs/handbook/utility-types.html#parameterstype). The iterator and conditional-type explanations above follow these references; the output is from the local runs.
 
-## Repository and remaining work
+## Bonus 3: Real code
+
+These six cases come from the Assignment 3 Task Manager starter, the installed TypeScript 5.8.3 package, and p-map v7.0.3. Source locations are recorded explicitly; the examples below are analyses of existing code. The rewrites show the same extraction behavior within the original surrounding code, rather than standalone replacements for the whole application.
+
+### 1. Task Manager state tuple
+
+Source: Downloads/starter.zip -> starter/src/App.tsx, line 37.
+
+Form 1: values by position.
+
+Original extraction:
+
+```tsx
+const [tasks, dispatch] = useReducer(taskReducer, [])
+```
+
+Without destructuring:
+
+```tsx
+const statePair = useReducer(taskReducer, [])
+const tasks = statePair[0]
+const dispatch = statePair[1]
+```
+
+useReducer returns the current task list and dispatch function. The pattern names the two positions and keeps the hook call to one evaluation. This improves readability because React hook pairs have stable positional roles.
+
+### 2. Task Manager React props
+
+Source: Downloads/starter.zip -> starter/src/TaskRow.tsx, line 5.
+
+Forms 5 and 11: object properties in a parameter.
+
+Original extraction:
+
+```tsx
+export default function TaskRow({ task, onNext, onDelete }: TaskRowProps) {
+```
+
+Without destructuring:
+
+```tsx
+export default function TaskRow(props: TaskRowProps) {
+  const task = props.task
+  const onNext = props.onNext
+  const onDelete = props.onDelete
+  // The original component body follows.
+}
+```
+
+task is data; onNext and onDelete are callback props. There is no children field in TaskRowProps and the call in App.tsx lines 25-30 is self-closing. The buttons and task title are created inside TaskRow, so they are not children supplied by its caller. React key belongs to element identity and is not an ordinary TaskRow prop.
+
+### 3. TypeScript pattern formatting
+
+Source: node_modules/typescript/lib/typescript.js, line 3631 (TypeScript 5.8.3).
+
+Forms 5 and 11: named fields in a parameter.
+
+Original extraction:
+
+```tsx
+function patternText({ prefix, suffix }) {
+```
+
+Without destructuring:
+
+```tsx
+function patternText(pattern) {
+  const prefix = pattern.prefix
+  const suffix = pattern.suffix
+  return `${prefix}*${suffix}`
+}
+```
+
+The function only needs prefix and suffix. A short parameter pattern makes its inputs visible without an extra alias. The plain form makes the original pattern object available if the function later needs more properties.
+
+### 4. TypeScript nested watcher entry
+
+Source: node_modules/typescript/lib/typescript.js, line 7802 (TypeScript 5.8.3).
+
+Form 9: object -> array -> nested object.
+
+Original extraction:
+
+```tsx
+const { value: [dirPath, { dirName, options, fileNames }] } = result;
+```
+
+Without destructuring:
+
+```tsx
+const entry = result.value
+const dirPath = entry[0]
+const details = entry[1]
+const dirName = details.dirName
+const options = details.options
+const fileNames = details.fileNames
+```
+
+This is the case where I find destructuring less readable. One line crosses three shapes and hides the intermediate watcher record. The surrounding code first asserts that the iterator is not done. Naming entry and details makes that assumption and the record boundary easier to inspect. The shorter pattern is valid, but the explicit version is easier to debug when a watcher entry is malformed.
+
+### 5. TypeScript version parser
+
+Source: node_modules/typescript/lib/typescript.js, line 4872 (TypeScript 5.8.3).
+
+Forms 2 and 4: skip a regex match and default missing capture groups.
+
+Original extraction:
+
+```tsx
+const [, major, minor = "0", patch = "0", prerelease = "", build2 = ""] = match;
+```
+
+Without destructuring:
+
+```tsx
+const major = match[1]
+const minor = match[2] === undefined ? '0' : match[2]
+const patch = match[3] === undefined ? '0' : match[3]
+const prerelease = match[4] === undefined ? '' : match[4]
+const build2 = match[5] === undefined ? '' : match[5]
+```
+
+The first comma skips the complete regex match. Later positions are capture groups. The defaults handle absent groups and retain explicit empty strings. This is compact but positional: changing the regular expression requires checking every capture index.
+
+### 6. p-map dependent option defaults
+
+Source: [p-map v7.0.3 index.js, lines 177-184](https://github.com/sindresorhus/p-map/blob/c9831c7a9b7baa6e986428cc7f1c83af694b5c8e/index.js#L177).
+
+Forms 7 and 11: defaults in an options parameter.
+
+Original extraction:
+
+```tsx
+export function pMapIterable(
+	iterable,
+	mapper,
+	{
+		concurrency = Number.POSITIVE_INFINITY,
+		backpressure = concurrency,
+	} = {},
+) {
+```
+
+Without destructuring:
+
+```tsx
+function readOptions(options = {}) {
+  const concurrency = options.concurrency === undefined
+    ? Number.POSITIVE_INFINITY : options.concurrency
+  const backpressure = options.backpressure === undefined
+    ? concurrency : options.backpressure
+  return { concurrency, backpressure }
+}
+```
+
+In pMapIterable, backpressure defaults to the already-bound concurrency. Omitting the whole options argument uses {}, and omitting either field uses its default. Null does not activate a default. The later validation in the actual library checks allowed numeric ranges; destructuring itself does not validate them. The rewrite isolates option extraction and leaves that surrounding validation unchanged.
+
+Source notes: the Task Manager cases were read from the original local starter.zip, not from the completed Assignment 3 repository. Installed TypeScript source is pinned by package-lock.json; its project is [microsoft/TypeScript](https://github.com/microsoft/TypeScript). The p-map reference is pinned to commit c9831c7a9b7baa6e986428cc7f1c83af694b5c8e, so future edits cannot shift this cited version. The small excerpts retain their original source spelling.
+
+## Repository and final packaging
 
 Public repository: [assignment4-field-guide](https://github.com/Hurulayn0/assignment4-field-guide).
 
-The core destructuring and React examples are implemented and locally verified. Depth experiments are verified. Real-code analysis and the LaTeX/PDF guide are the remaining stages. Bonus 4 will be assessed against the actual dated history and public access.
+The core destructuring and React examples are implemented and locally verified. Depth experiments and six real-code analyses are verified. The LaTeX/PDF guide and final clean package validation are the remaining work. Bonus 4 will be assessed against the actual dated history and public access.
 
 ## My own log
 

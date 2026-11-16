@@ -1,0 +1,11 @@
+Task Manager source archive: Downloads/starter.zip
+Archive SHA256: 552ec999bfdd81d18b3b00f8878a797f00fc3076ada5145af04d9e0e15555475
+Cases: starter/src/App.tsx:37; starter/src/TaskRow.tsx:5
+Installed TypeScript: 5.8.3
+node_modules/typescript/lib/typescript.js SHA256: dd17428736a07e1db1a138d8a14295ddb2699ba780ee15038acdd2c6da5373a0
+Cases: lines 3631, 7802 and 4872
+Open source: sindresorhus/p-map v7.0.3
+Pinned commit: c9831c7a9b7baa6e986428cc7f1c83af694b5c8e
+Case: index.js lines 177-184
+
+Reverified 16 November 2026: Task Manager source lines read from original archive; installed TypeScript SHA256 matches; GitHub p-map contents API returned pinned blob 10558008a77283d95c7781a51481a819c6b1143b.
