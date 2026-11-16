@@ -41,3 +41,28 @@ Exit: 2
 Source: const { a: string } = { a: 'basil' }; console.log(a); export {}
 Exit: 2
 .compiler-experiments/rename.tsx(1,51): error TS2304: Cannot find name 'a'.
+
+## nodeFunction
+Source: import type { ReactNode } from 'react'; const child: ReactNode = () => 'mint';
+Exit: 2
+.compiler-experiments/nodeFunction.tsx(1,66): error TS2322: Type '() => string' is not assignable to type 'ReactNode'.
+
+## nodeObject
+Source: import type { ReactNode } from 'react'; const child: ReactNode = { crop: 'mint' };
+Exit: 2
+.compiler-experiments/nodeObject.tsx(1,68): error TS2353: Object literal may only specify known properties, and 'crop' does not exist in type 'ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<...>'.
+
+## withChildren
+Source: import type { PropsWithChildren } from 'react'; const props: PropsWithChildren<{ title: string }> = { title: 'Balcony', children: () => 'mint' };
+Exit: 2
+.compiler-experiments/withChildren.tsx(1,131): error TS2322: Type '() => string' is not assignable to type 'ReactNode'.
+
+## buttonHref
+Source: import type { ComponentProps } from 'react'; const props: ComponentProps<'button'> = { href: '/water' };
+Exit: 2
+.compiler-experiments/buttonHref.tsx(1,88): error TS2561: Object literal may only specify known properties, but 'href' does not exist in type 'DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>'. Did you mean to write 'ref'?
+
+## buttonDisabled
+Source: import type { ComponentProps } from 'react'; const props: ComponentProps<'button'> = { disabled: 'yes' };
+Exit: 2
+.compiler-experiments/buttonDisabled.tsx(1,88): error TS2322: Type 'string' is not assignable to type 'boolean | undefined'.

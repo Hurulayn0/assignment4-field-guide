@@ -1,9 +1,9 @@
 Name: Huriye Kayadelen
 Student number: 2200005795
 
-# Destructuring Field Guide - Part 1
+# Destructuring Field Guide
 
-This first part covers the twelve JavaScript and strict TypeScript forms, five pitfalls, T1-T5 and an eight-row comparison table. The examples use a balcony garden theme. React props and children and the optional bonus work are planned for the next part; this is not the final submission.
+This guide covers the twelve JavaScript and strict TypeScript forms, five pitfalls, T1-T5 and React P1-P7. The examples use a balcony garden theme. The optional depth, real-code and LaTeX sections are the next work stages.
 
 ## Run and scope
 
@@ -546,6 +546,170 @@ Actual diagnostic, captured in logs/t5-diagnostic.txt (expected exit 2):
 .compiler-experiments/t5-unsuppressed.tsx(27,9): error TS2339: Property 'litres' does not exist on type '{ liters: number; }'.
 ```
 
+## Props and children - Day 2
+
+Both props files run P1-P7 using renderToStaticMarkup. The snippets below are from ts/props.tsx; js/props.jsx uses the same components without annotations. Shared types/imports:
+
+```tsx
+import type { ReactNode, PropsWithChildren, ComponentProps } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
+type CardProps = { title: string; children?: ReactNode }
+```
+
+### P1
+
+```tsx
+function CardA(props: CardProps) { return <section><h2>{props.title}</h2>{props.children}</section> }
+function CardB({ title, children }: CardProps) { return <section><h2>{title}</h2>{children}</section> }
+```
+
+A component gets one props object. CardA reads its properties directly; CardB binds the same properties in its parameter. That combines form 5 (named properties) with form 11 (parameter patterns). Neither version changes what React receives.
+
+Real output (the JS and TS runs agree):
+
+```text
+P1 A: <section><h2>Balcony</h2>basil</section>
+P1 B: <section><h2>Balcony</h2>basil</section>
+```
+
+### P2
+
+```tsx
+<CardB title="Balcony">mint</CardB>
+<CardB title="Balcony" children="mint" />
+```
+
+The content between tags becomes the children property. These two calls render the same HTML. Missing children is allowed and renders nothing; it is not a second argument to the component.
+
+Real output (the JS and TS runs agree):
+
+```text
+P2 content: <section><h2>Balcony</h2>mint</section>
+P2 attribute: <section><h2>Balcony</h2>mint</section>
+```
+
+### P3
+
+```tsx
+const cases: [string, ReactNode][] = [
+  ['string', 'basil'], ['number', 3], ['element', <b>mint</b>],
+  ['elements', [<b key="b">basil</b>, <i key="m">mint</i>]],
+  ['undefined', undefined], ['null', null], ['false', false]
+]
+for (const [name, child] of cases) console.log('P3 ' + name + ':', renderToStaticMarkup(<section>{child}</section>))
+function RenderCrop({ children }: { children: (crop: string) => ReactNode }) {
+  return <section>{children('mint')}</section>
+}
+<RenderCrop>{crop => <b>{crop}</b>}</RenderCrop>
+```
+
+Strings and numbers render as text; elements render as HTML. Several elements retain their order. undefined, null and false leave no visible content. A function is not an ordinary ReactNode: passing it directly warns and leaves the section empty. RenderCrop instead accepts a function in its own explicit type and calls it with mint. The returned element is what React renders. The direct function and object failures are deliberate experiments in the JS helper invalidChildren(), also called by the TS run, so TS needs no suppression or unsafe cast.
+
+Real output (the JS and TS runs agree):
+
+```text
+P3 string: <section>basil</section>
+P3 number: <section>3</section>
+P3 element: <section><b>mint</b></section>
+P3 elements: <section><b>basil</b><i>mint</i></section>
+P3 undefined: <section></section>
+P3 null: <section></section>
+P3 false: <section></section>
+P3 function: <section></section>
+P3 object deliberate experiment: Error: Objects are not valid as a React child (found: object with keys {crop}). If you meant to render a collection of children, use an array instead.
+P3 render prop: <section><b>mint</b></section>
+```
+
+The JS probe really passes `<section>{grow}</section>` where `grow = () => <b>mint</b>`, and `<section>{{ crop: 'mint' }}</section>`. The console capture forwards the original React arguments to console.log, so the raw `%s` placeholders and following substitution arguments are preserved:
+
+```text
+React warning: Functions are not valid as a React child. This may happen if you return %s instead of <%s /> from render. Or maybe you meant to call this function rather than return it. grow grow
+```
+
+### P4
+
+```tsx
+function Frame({ title, children, ...rest }: CardProps & ComponentProps<'section'>) {
+  return <section {...rest}><h2>{title}</h2>{children}</section>
+}
+const dom: ComponentProps<'section'> = { id: 'bed-B2', className: 'from-spread' }
+<Frame title="Water" {...dom}>2 L</Frame>
+<section {...dom} className="explicit">basil</section>
+<section className="explicit" {...dom}>basil</section>
+```
+
+Rest collects all properties except title and children. Spreading rest forwards id and className onto the section, while children remains body content and title becomes a heading. React writes className as class in HTML. When values conflict, the later property wins. The TS DOM type makes className optional: it describes a normal forwarding component.
+
+Real output (the JS and TS runs agree):
+
+```text
+P4 rest: <section id="bed-B2" class="from-spread"><h2>Water</h2>2 L</section>
+P4 explicit last: <section id="bed-B2" class="explicit">basil</section>
+P4 spread last: <section class="from-spread" id="bed-B2">basil</section>
+```
+
+### P5
+
+```tsx
+function Slots({ header, footer, children }: PropsWithChildren<{ header: ReactNode; footer: ReactNode }>) {
+  return <article><header>{header}</header><main>{children}</main><footer>{footer}</footer></article>
+}
+function Flow({ children }: PropsWithChildren) { return <article>{children}</article> }
+<Slots header={<h2>Water</h2>} footer={<small>Evening</small>}><p>2 L</p></Slots>
+<Flow><header><h2>Water</h2></header><main><p>2 L</p></main><footer><small>Evening</small></footer></Flow>
+```
+
+Slots fixes the header/body/footer structure and names the roles. I would choose it for a consistent watering card whose callers supply content but not layout. Flow leaves structure and order to the caller; I would choose it for a flexible garden journal with mixed sections. They can render identical HTML here, but Flow does not enforce the slot layout.
+
+Real output (the JS and TS runs agree):
+
+```text
+P5 slots: <article><header><h2>Water</h2></header><main><p>2 L</p></main><footer><small>Evening</small></footer></article>
+P5 children: <article><header><h2>Water</h2></header><main><p>2 L</p></main><footer><small>Evening</small></footer></article>
+```
+
+### P6
+
+```tsx
+function DefaultCard({ title = 'Balcony', children }: { title?: string | null; children?: ReactNode }) {
+  return <section><h2>{title}</h2>{children}</section>
+}
+<DefaultCard />
+<DefaultCard title={undefined} />
+<DefaultCard title={null} />
+```
+
+This is the form 7 default inside a form 11 parameter. A missing title and an explicit undefined both use Balcony. Null is an explicit value and does not activate the default; React renders it as no heading content. An empty string would also stay empty. A field default does not protect destructuring an entire null props object.
+
+Real output (the JS and TS runs agree):
+
+```text
+P6 missing: <section><h2>Balcony</h2></section>
+P6 undefined: <section><h2>Balcony</h2></section>
+P6 null: <section><h2></h2></section>
+```
+
+### P7
+
+```tsx
+function GardenButton({ children, ...rest }: ComponentProps<'button'>) {
+  return <button {...rest}>{children}</button>
+}
+<CardB title="Seeds">{3}</CardB>
+<Flow />
+<GardenButton type="button" disabled>Water</GardenButton>
+```
+
+children?: ReactNode permits missing children, text, numbers, elements, arrays of nodes and empty values such as null/false. It rejects a function or an arbitrary object. PropsWithChildren<P> adds optional ReactNode children to P; it does not make other required props optional and does not turn a function into a node. ComponentProps<'button'> reuses React button props, including children, type, disabled and event types. It rejects href (an anchor prop) and disabled="yes". Runtime rendering alone does not check these types: tsx executes, while tsc checks. The deliberate rejected examples were each compiled separately in disposable files and removed; exact sources, exit codes and diagnostics are in logs/compiler-diagnostics.txt.
+
+Real output (the JS and TS runs agree):
+
+```text
+P7 ReactNode: <section><h2>Seeds</h2>3</section>
+P7 PropsWithChildren: <article></article>
+P7 button: <button type="button" disabled="">Water</button>
+```
+
 ## JavaScript versus TypeScript
 
 Types do not change destructuring at runtime. These are actual strict compiler diagnostics, not predicted messages. Every case was an isolated deliberate experiment. Full diagnostics and experiment sources: [logs/compiler-diagnostics.txt](logs/compiler-diagnostics.txt).
@@ -561,11 +725,14 @@ Types do not change destructuring at runtime. These are actual strict compiler d
 | 12: Map loop | Entries contain key and value | Map<string, number> | TS2345: Argument of type 'string' is not assignable to parameter of type 'number'. |
 | T5: missing property | A wrong key reads undefined in JS | Correct property spelling | TS2339: Property 'litres' does not exist on type '{ liters: number; }'. |
 
-## Repository and next part
+| P7: children | React decides runtime rendering | ReactNode | TS2322: Type '() => string' is not assignable to type 'ReactNode'. |
+| P7: DOM forwarding | Props spread in order | `ComponentProps<'button'>` | TS2322: Type 'string' is not assignable to type 'boolean \| undefined'. |
+
+## Repository and remaining work
 
 Public repository: [assignment4-field-guide](https://github.com/Hurulayn0/assignment4-field-guide).
 
-This repository begins with the completed plain-language examples and their evidence. The next part will add runnable P1-P7 in JavaScript and TypeScript, their render output, the LaTeX/PDF guide, deeper experiments and real-code analysis. Bonus 4 is not claimed: publishing one initial commit does not meet five meaningful commits over several days.
+The core destructuring and React examples are implemented and locally verified. Depth experiments, real-code analysis and the LaTeX/PDF guide are the remaining stages. Bonus 4 will be assessed against the actual dated history and public access.
 
 ## My own log
 
@@ -580,3 +747,6 @@ The entries below record actual experiment results. Predictions were recorded be
 5. The empty typed array gave undefined. The default produced empty, and the undefined check avoided calling toUpperCase on a missing value.
 6. Deliberate T5 experiment: the misspelled property produced TS2339. The wrong key gave undefined at runtime and the corrected key gave 2. The exact compiler diagnostic is in logs/t5-diagnostic.txt.
 7. In T1, the variable named string contained basil. The colon inside the pattern renamed the binding; the type annotation belongs after the whole pattern.
+
+8. A direct function child produced the exact React warning in P3 and no visible content. The render-prop component called its function and rendered mint. The deliberately invalid object child threw a caught Error.
+9. All five P7 misuse cases failed strict checks as predicted. Exact messages are recorded in logs/compiler-diagnostics.txt.
